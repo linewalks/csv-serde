@@ -27,7 +27,8 @@ create table my_table(a string, b string, ...)
 The default separator, quote, and escape characters from the `opencsv` library and custom newline replacer defined by linewalks:
 
 ```
-DEFAULT_NEWLINE_REPLACER_STR <br/>
+DEFAULT_NULLCHAR \u0000
+DEFAULT_NEWLINE_REPLACER_CHAR \n
 DEFAULT_ESCAPE_CHARACTER \
 DEFAULT_QUOTE_CHARACTER  "
 DEFAULT_SEPARATOR        ,
@@ -41,11 +42,12 @@ add jar path/to/csv-serde.jar;
 create table my_table(a string, b string, ...)
  row format serde 'com.bizo.hive.serde.csv.CSVSerde'
  with serdeproperties (
+   "nullChar"      = "",
    "separatorChar" = "\t",
    "quoteChar"     = "'",
    "escapeChar"    = "\\",
-   "newlineReplacerStr = "<br/>"
-  )	  
+   "newlineReplacerChar = "\n"
+  )
  stored as textfile
 ;
 ```
