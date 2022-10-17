@@ -47,14 +47,17 @@ public final class CSVSerde extends AbstractSerDe {
   private char separatorChar;
   private char quoteChar;
   private char escapeChar;
-  private String newlineReplacerStr;
+  private String newlineReplacerChar;
+  private String nullChar;
   
   public static final String SEPARATORCHAR = "separatorChar";
   public static final String QUOTECHAR = "quoteChar";
   public static final String ESCAPECHAR = "escapeChar";
-  public static final String NEWLINEREPLACERSTR = "newlineReplacerStr";
+  public static final String NEWLINEREPLACERCHAR = "newlineReplacerChar";
+  public static final String NULLCHAR = "nullChar";
 
-  public static final String DEFAULT_NEWLINE_REPLACER_STR = "<br/>";
+  public static final String DEFAULT_NEWLINE_REPLACER_CHAR = System.getProperty("line.separator");
+  public static final String DEFAULT_NULLCHAR = ""; // \u0000
 
   @Override
   public void initialize(final Configuration conf, final Properties tbl) throws SerDeException {
@@ -80,7 +83,8 @@ public final class CSVSerde extends AbstractSerDe {
     separatorChar = getProperty(tbl, SEPARATORCHAR, CSVWriter.DEFAULT_SEPARATOR);
     quoteChar = getProperty(tbl, QUOTECHAR, CSVWriter.DEFAULT_QUOTE_CHARACTER);
     escapeChar = getProperty(tbl, ESCAPECHAR, CSVWriter.DEFAULT_ESCAPE_CHARACTER);
-    newlineReplacerStr = getProperty(tbl, NEWLINEREPLACERSTR, DEFAULT_NEWLINE_REPLACER_STR);
+    newlineReplacerChar = getProperty(tbl, NEWLINEREPLACERCHAR, DEFAULT_NEWLINE_REPLACER_CHAR);
+    nullChar = getProperty(tbl, NULLCHAR, DEFAULT_NULLCHAR);
   }
   
   private char getProperty(final Properties tbl, final String property, final char def) {
@@ -150,7 +154,12 @@ public final class CSVSerde extends AbstractSerDe {
 
       for (int i = 0; i < numCols; i++) {
         if (read != null && i < read.length) {
-          row.set(i, read[i].replaceAll("\n", newlineReplacerStr));
+          if (read[i].equals(nullChar)) {
+            row.set(i, null);
+          }
+          else {
+            row.set(i, read[i].replaceAll("\n", newlineReplacerChar));
+          }
         } else {
           row.set(i, null);
         }

@@ -99,7 +99,7 @@ public class TestCSVSerde {
   public void testDeserializeNewlineInString() throws Exception {
     props.setProperty(CSVSerde.QUOTECHAR, "\"");
     props.setProperty(CSVSerde.ESCAPECHAR, "\\");
-    // props.setProperty(CSVSerde.NEWLINEREPLACERSTR, "<bt/>");
+    props.setProperty(CSVSerde.NEWLINEREPLACERCHAR, System.getProperty("line.separator"));
     
     csv.initialize(null, props);
     
@@ -107,7 +107,39 @@ public class TestCSVSerde {
     final List<String> row = (List<String>) csv.deserialize(in);
 
     assertEquals("hello", row.get(0));
-    assertEquals("yes'<br/>okay", row.get(1));
+    assertEquals("yes'\nokay", row.get(1));
     assertEquals("1", row.get(2));
-  } 
+  }
+
+  @Test
+  public void testDeserializeNewlineInString2() throws Exception {
+    props.setProperty(CSVSerde.QUOTECHAR, "\"");
+    props.setProperty(CSVSerde.ESCAPECHAR, "\\");
+    props.setProperty(CSVSerde.NEWLINEREPLACERCHAR, System.getProperty("line.separator"));
+    
+    csv.initialize(null, props);
+    
+    final Text in = new Text("\"hello\",\"yes'\nokay\",\"1\"");
+    final List<String> row = (List<String>) csv.deserialize(in);
+
+    assertEquals("hello", row.get(0));
+    assertEquals("yes'\nokay", row.get(1));
+    assertEquals("1", row.get(2));
+  }
+
+  @Test
+  public void testDeserializeBlankToNull() throws Exception {
+    props.setProperty(CSVSerde.QUOTECHAR, "\"");
+    props.setProperty(CSVSerde.ESCAPECHAR, "\\");
+    props.setProperty(CSVSerde.NULLCHAR, "");
+    props.setProperty(CSVSerde.NEWLINEREPLACERCHAR, System.getProperty("line.separator"));
+    
+    csv.initialize(null, props);
+    
+    final Text in = new Text("\"hello\",\"yes'\nokay\",");
+    final List<String> row = (List<String>) csv.deserialize(in);
+    assertEquals("hello", row.get(0));
+    assertEquals("yes'\nokay", row.get(1));
+    assertEquals(null, row.get(2));
+  }
 }
