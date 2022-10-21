@@ -47,13 +47,11 @@ public final class CSVSerde extends AbstractSerDe {
   private char separatorChar;
   private char quoteChar;
   private char escapeChar;
-  private String newlineReplacerChar;
   private String nullChar;
   
   public static final String SEPARATORCHAR = "separatorChar";
   public static final String QUOTECHAR = "quoteChar";
   public static final String ESCAPECHAR = "escapeChar";
-  public static final String NEWLINEREPLACERCHAR = "newlineReplacerChar";
   public static final String NULLCHAR = "nullChar";
 
   public static final String DEFAULT_NEWLINE_REPLACER_CHAR = System.getProperty("line.separator");
@@ -83,7 +81,6 @@ public final class CSVSerde extends AbstractSerDe {
     separatorChar = getProperty(tbl, SEPARATORCHAR, CSVWriter.DEFAULT_SEPARATOR);
     quoteChar = getProperty(tbl, QUOTECHAR, CSVWriter.DEFAULT_QUOTE_CHARACTER);
     escapeChar = getProperty(tbl, ESCAPECHAR, CSVWriter.DEFAULT_ESCAPE_CHARACTER);
-    newlineReplacerChar = getProperty(tbl, NEWLINEREPLACERCHAR, DEFAULT_NEWLINE_REPLACER_CHAR);
     nullChar = getProperty(tbl, NULLCHAR, DEFAULT_NULLCHAR);
   }
   
@@ -158,7 +155,7 @@ public final class CSVSerde extends AbstractSerDe {
             row.set(i, null);
           }
           else {
-            row.set(i, read[i].replaceAll("\n", newlineReplacerChar));
+            row.set(i, read[i]);
           }
         } else {
           row.set(i, null);

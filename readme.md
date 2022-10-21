@@ -28,7 +28,6 @@ The default separator, quote, and escape characters from the `opencsv` library a
 
 ```
 DEFAULT_NULLCHAR \u0000
-DEFAULT_NEWLINE_REPLACER_CHAR \n
 DEFAULT_ESCAPE_CHARACTER \
 DEFAULT_QUOTE_CHARACTER  "
 DEFAULT_SEPARATOR        ,
@@ -43,10 +42,9 @@ create table my_table(a string, b string, ...)
  row format serde 'com.bizo.hive.serde.csv.CSVSerde'
  with serdeproperties (
    "nullChar"      = "",
-   "separatorChar" = "\t",
+   "separatorChar" = ",",
    "quoteChar"     = "'",
    "escapeChar"    = "\\",
-   "newlineReplacerChar = "\n"
   )
  stored as textfile
 ;
